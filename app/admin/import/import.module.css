@@ -1,0 +1,166 @@
+.importPage {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+.tab {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    bottom: -2px;
+}
+
+.tab:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.tab.active {
+    color: #fff;
+    border-bottom-color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tabContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.info {
+    background: rgba(99, 102, 241, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.info h3 {
+    margin: 0 0 0.75rem 0;
+    color: #fff;
+    font-size: 1.25rem;
+}
+
+.info p {
+    margin: 0 0 1rem 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+.info strong {
+    color: #6366f1;
+    font-weight: 600;
+}
+
+.example {
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 3px solid #6366f1;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+}
+
+.example strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.example code {
+    display: block;
+    color: #22c55e;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    word-break: break-all;
+}
+
+.note {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 8px;
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .importPage {
+        padding: 1rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .header p {
+        font-size: 1rem;
+    }
+
+    .tabs {
+        overflow-x: auto;
+    }
+
+    .tab {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .info {
+        padding: 1rem;
+    }
+
+    .example code {
+        font-size: 0.75rem;
+    }
+}

@@ -1,0 +1,141 @@
+.sliderContainer {
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4rem;
+}
+
+.testimonialTrack {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    transition: transform 0.5s ease;
+}
+
+.testimonialCard {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: all 0.4s ease;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonialCard:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary-light);
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.25);
+}
+
+.stars {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.quote {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    flex: 1;
+}
+
+.author {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.author strong {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+}
+
+.author span {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.navButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(99, 102, 241, 0.8);
+    border: none;
+    color: white;
+    font-size: 3rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.navButton:hover {
+    background: rgba(99, 102, 241, 1);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.dot:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.activeDot {
+    background: var(--primary-light);
+    width: 30px;
+    border-radius: 5px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .sliderContainer {
+        padding: 0 3rem;
+    }
+
+    .testimonialTrack {
+        grid-template-columns: 1fr;
+    }
+
+    .navButton {
+        width: 40px;
+        height: 40px;
+        font-size: 2rem;
+    }
+
+    .testimonialCard {
+        min-height: auto;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .testimonialTrack {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

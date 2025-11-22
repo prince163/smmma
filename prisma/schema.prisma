@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String? // Nullable for guest checkout auto-creation
+  name      String?
+  role      String   @default("USER") // USER, ADMIN
+  balance   Float    @default(0.0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+  tickets   Ticket[]
+  spins     UserSpin[]
+}
+
+model Platform {
+  id       String    @id @default(cuid())
+  name     String
+  slug     String    @unique
+  icon     String?
+  services Service[]
+}
+
+model Service {
+  id         String     @id @default(cuid())
+  name       String
+  platformId String
+  platform   Platform   @relation(fields: [platformId], references: [id])
+  packages   Package[]
+  spinSlots  SpinSlot[]
+}
+
+model Package {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  price       Float      // Price per 1000 units
+  minQuantity Int?       // Min quantity for custom orders
+  maxQuantity Int?       // Max quantity for custom orders
+  quantity    Int?       // Fixed quantity for pre-built packages
+  packageType String     @default("CUSTOM") // "CUSTOM" or "PREBUILT"
+  serviceId   String
+  service     Service    @relation(fields: [serviceId], references: [id])
+  orders      Order[]
+}
+
+model Bundle {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  items       String // JSON string of included services/packages
+}
+
+model Order {
+  id          String    @id @default(cuid())
+  orderNumber String    @unique @default("")
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  packageId   String?
+  package     Package?  @relation(fields: [packageId], references: [id])
+  link        String
+  quantity    Int
+  price       Float
+  status      String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, CANCELLED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  spinReward  UserSpin?
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  subject   String
+  status    String   @default("OPEN") // OPEN, PENDING, SOLVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages  TicketMessage[]
+}
+
+model TicketMessage {
+  id        String   @id @default(cuid())
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  sender    String   // USER or ADMIN
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  filename     String   // Stored filename
+  originalName String   // Original upload name
+  mimeType     String   // image/jpeg, image/png, etc.
+  size         Int      // File size in bytes
+  url          String   // Public URL path
+  uploadedBy   String?  // Admin user ID
+  createdAt    DateTime @default(now())
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String   // HTML or Markdown content
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Currency {
+  id           String   @id @default(cuid())
+  code         String   @unique // ZAR, USD, EUR, etc.
+  name         String   // South African Rand, US Dollar, etc.
+  symbol       String   // R, $, €, etc.
+  exchangeRate Float    @default(1.0) // Rate relative to base currency
+  isDefault    Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+model DiscountTier {
+  id              String   @id @default(cuid())
+  name            String   // e.g., "Bronze", "Silver", "Gold"
+  minQuantity     Int      // Minimum quantity to trigger this tier
+  discountPercent Float    // Discount percentage (e.g., 5, 10, 15)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================
+// SPIN & WIN FEATURE MODELS
+// ============================================
+
+model SpinConfiguration {
+  id          String     @id @default(cuid())
+  name        String     // "Default", "Facebook Day", "Instagram Day"
+  description String?
+  platform    String?    // null = random, or specific platform like "FACEBOOK"
+  isActive    Boolean    @default(true)
+  slots       SpinSlot[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model SpinSlot {
+  id           String            @id @default(cuid())
+  configId     String
+  config       SpinConfiguration @relation(fields: [configId], references: [id], onDelete: Cascade)
+  position     Int               // 1-6
+  rewardType   String            // "NONE", "SERVICE", "DISCOUNT"
+  rewardLabel  String            // "Try Again", "1000 Views", "10% Off"
+  platform     String?           // "FACEBOOK", "INSTAGRAM", "TIKTOK"
+  serviceId    String?           // Link to Service model
+  service      Service?          @relation(fields: [serviceId], references: [id])
+  rewardValue  Int?              // 1000, 200, 10
+  discountType String?           // "PERCENTAGE", "FIXED"
+  probability  Int               @default(1) // Weight for probability
+  isActive     Boolean           @default(true)
+  color        String?           // Hex color for wheel segment
+  icon         String?           // Emoji or icon identifier
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([configId])
+}
+
+model UserSpin {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  configId     String
+  slotId       String
+  platform     String    // Which platform wheel was shown
+  rewardType   String    // "NONE", "SERVICE", "DISCOUNT"
+  rewardLabel  String    // Display text
+  rewardValue  Int?
+  status       String    @default("PENDING") // "WON_CLAIMED", "WON_PENDING", "EXPIRED", "TRY_AGAIN"
+  orderId      String?   @unique // For service rewards
+  order        Order?    @relation(fields: [orderId], references: [id])
+  discountCode String?   // Generated discount code
+  claimData    String?   // JSON string: {url, username, etc.}
+  expiresAt    DateTime?
+  spunAt       DateTime  @default(now())
+  claimedAt    DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([spunAt])
+}
+
+model SpinSettings {
+  id               String   @id @default(cuid())
+  isEnabled        Boolean  @default(true)
+  spinFrequencyHrs Int      @default(24)
+  requireLogin     Boolean  @default(true)
+  claimWindowHrs   Int      @default(24)
+  rulesText        String   @default("1 spin per user every 24 hours. Rewards are non-transferable. Service rewards must be claimed within 24 hours. Discount rewards are valid only on the next order within 24 hours.")
+  platformMode     String   @default("RANDOM") // "RANDOM", "FIXED", "PRESET"
+  activeConfigId   String?  // For FIXED mode
+  showOnHomepage   Boolean  @default(true)
+  showOnDashboard  Boolean  @default(true)
+  enableSounds     Boolean  @default(true)
+  enableConfetti   Boolean  @default(true)
+  floatingIconText String   @default("Daily Spin")
+  popupTitle       String   @default("Daily Spin & Win")
+  popupSubtitle    String   @default("Spin the wheel for amazing rewards!")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
