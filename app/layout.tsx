@@ -14,9 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Force dynamic rendering for all pages to avoid build-time database connections
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
   title: "Lets Grow - Grow Your Digital Presence",
   description: "Boost your online visibility with our AI-driven social media growth tools. Real engagement, real results.",

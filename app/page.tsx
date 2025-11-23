@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import TestimonialSlider from '@/components/TestimonialSlider';
@@ -7,10 +9,17 @@ import Link from 'next/link';
 import styles from './page.module.css';
 
 export default async function Home() {
-  const platforms = await prisma.platform.findMany({
-    include: { _count: { select: { services: true } } },
-    orderBy: { name: 'asc' },
-  });
+  let platforms = [];
+
+  try {
+    platforms = await prisma.platform.findMany({
+      include: { _count: { select: { services: true } } },
+      orderBy: { name: 'asc' },
+    });
+  } catch (error) {
+    // Database not set up yet - show empty state
+    console.log('Database not accessible, showing empty state');
+  }
 
   return (
     <div className={styles.homePage}>
