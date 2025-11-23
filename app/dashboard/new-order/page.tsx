@@ -1,16 +1,24 @@
+export const dynamic = 'force-dynamic';
+
 import prisma from '@/lib/prisma';
 import NewOrderForm from './NewOrderForm';
 
 export default async function NewOrderPage() {
-    const platforms = await prisma.platform.findMany({
-        include: {
-            services: {
-                include: {
-                    packages: true,
+    let platforms = [];
+
+    try {
+        platforms = await prisma.platform.findMany({
+            include: {
+                services: {
+                    include: {
+                        packages: true,
+                    },
                 },
             },
-        },
-    });
+        });
+    } catch (error) {
+        console.log('Database not accessible');
+    }
 
     return (
         <div>
