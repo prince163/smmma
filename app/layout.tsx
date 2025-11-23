@@ -1,3 +1,7 @@
+// Force dynamic rendering for all pages to avoid build-time database connections
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
