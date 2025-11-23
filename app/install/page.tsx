@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './install.module.css';
 
@@ -48,9 +46,9 @@ export default function InstallPage() {
     });
 
     // Check requirements on mount
-    useState(() => {
+    useEffect(() => {
         checkRequirements();
-    });
+    }, []);
 
     const checkRequirements = async () => {
         try {
